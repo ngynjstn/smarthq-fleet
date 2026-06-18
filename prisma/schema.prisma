@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Appliance {
+  id        String    @id @default(cuid())
+  name      String    // human label, e.g. "Kitchen Fridge"
+  type      String    // "REFRIGERATOR" | "WASHER" | "DRYER" | "OVEN" — validated in app via zod
+  model     String    // model number, e.g. "PFE28KYNFS"
+  createdAt DateTime  @default(now())
+  readings  Reading[] // one appliance has many readings
+}
+
+model Reading {
+  id          String    @id @default(cuid())
+  appliance   Appliance @relation(fields: [applianceId], references: [id])
+  applianceId String
+  metric      String    // "TEMP_C" | "DOOR_OPEN" | "POWER_W" | "CYCLE_STATE"
+  value       Float
+  recordedAt  DateTime  @default(now())
+
+  @@index([applianceId, recordedAt])
+}
