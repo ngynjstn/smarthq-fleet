@@ -42,4 +42,10 @@ next-env.d.ts
 
 /src/generated/prisma
 
-CLAUDE.md
+/CLAUDE.md
+
+/simulator/fridge.ts
+
+# local sqlite database (regenerated via `npx prisma migrate dev`)
+/dev.db
+*.db-journal

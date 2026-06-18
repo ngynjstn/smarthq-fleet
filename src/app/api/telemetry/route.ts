@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 // anything that doesnt match get rejected before it even touches the db
 const TelemetrySchema = z.object({
     applianceId: z.string().min(1),
-    metric: z.enum(["TEMP_C", "DOOR_OPEN", "POWER_W", "CYCLE_STATE"]),
+    metric: z.enum(["TEMP_C", "DOOR_OPEN", "POWER_W", "CYCLE_STATE", "VIBRATION_MM_S"]),
     value: z.number(),
 });
 

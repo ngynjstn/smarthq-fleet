@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-type Reading = {
-  id: string;
-  metric: string;
-  value: number;
-  recordedAt: string;
+type Status = "HEALTHY" | "WARNING" | "CRITICAL" | "OFFLINE";
+
+type Health = {
+  status: Status;
+  reason: string;
+  metric: string | null;
+  value: number | null;
 };
 
 type Appliance = {
@@ -14,72 +16,98 @@ type Appliance = {
   name: string;
   type: string;
   model: string;
-  readings: Reading[];
+  health: Health;
+};
+
+// Map each status to its styles ONCE, instead of scattering if/else in the JSX.
+const STATUS_STYLES: Record<Status, { dot: string; badge: string; ring: string }> = {
+  HEALTHY:  { dot: "bg-green-500", badge: "bg-green-100 text-green-800", ring: "" },
+  WARNING:  { dot: "bg-amber-500", badge: "bg-amber-100 text-amber-800", ring: "ring-2 ring-amber-300" },
+  CRITICAL: { dot: "bg-red-500",   badge: "bg-red-100 text-red-800",     ring: "ring-2 ring-red-400" },
+  OFFLINE:  { dot: "bg-gray-400",  badge: "bg-gray-100 text-gray-600",   ring: "" },
 };
 
 export default function Dashboard() {
-  const [appliance, setAppliance] = useState<Appliance | null>(null);
+  const [fleet, setFleet] = useState<Appliance[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/appliances/fridge-001");
+        const res = await fetch("/api/appliances");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        setAppliance(await res.json());
+        setFleet(await res.json());
         setError(null);
       } catch (e) {
         setError((e as Error).message);
       }
     }
-
-    load();                                   // fetch immediately on mount
-    const interval = setInterval(load, 3000); // then every 3s
-    return () => clearInterval(interval);     // cleanup: stop polling on unmount
+    load();
+    const interval = setInterval(load, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   if (error) return <main className="p-8 text-red-600">Error: {error}</main>;
-  if (!appliance) return <main className="p-8">Loading…</main>;
+  if (!fleet) return <main className="p-8">Loading…</main>;
 
-  // readings come back newest-first, so the first TEMP_C is the latest.
-  const latestTemp = appliance.readings.find((r) => r.metric === "TEMP_C");
+  // Tally how many appliances are in each status for the summary bar.
+  const counts = fleet.reduce(
+    (acc, a) => {
+      acc[a.health.status]++;
+      return acc;
+    },
+    { HEALTHY: 0, WARNING: 0, CRITICAL: 0, OFFLINE: 0 } as Record<Status, number>
+  );
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-5xl">
         <h1 className="text-2xl font-bold text-gray-900">SmartHQ Fleet</h1>
         <p className="text-gray-500">Connected appliance monitor</p>
 
-        <div className="mt-6 rounded-xl bg-white p-6 shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold">{appliance.name}</h2>
-              <p className="text-sm text-gray-500">
-                {appliance.type} · {appliance.model}
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-4xl font-bold text-blue-600">
-                {latestTemp ? `${latestTemp.value}°C` : "—"}
-              </div>
-              <div className="text-xs text-gray-400">current temp</div>
-            </div>
-          </div>
+        <div className="mt-4 flex flex-wrap gap-3 text-sm">
+          <Summary label="Healthy" n={counts.HEALTHY} color="text-green-700" />
+          <Summary label="Warning" n={counts.WARNING} color="text-amber-700" />
+          <Summary label="Critical" n={counts.CRITICAL} color="text-red-700" />
+          <Summary label="Offline" n={counts.OFFLINE} color="text-gray-500" />
+        </div>
 
-          <h3 className="mt-6 text-sm font-medium text-gray-700">Recent readings</h3>
-          <ul className="mt-2 divide-y divide-gray-100">
-            {appliance.readings.map((r) => (
-              <li key={r.id} className="grid grid-cols-3 py-1 text-sm">
-                <span className="text-gray-600">{r.metric}</span>
-                <span className="font-mono">{r.value}</span>
-                <span className="text-right text-gray-400">
-                  {new Date(r.recordedAt).toLocaleTimeString()}
-                </span>
-              </li>
-            ))}
-          </ul>
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {fleet.map((a) => {
+            const s = STATUS_STYLES[a.health.status];
+            return (
+              <div key={a.id} className={`rounded-xl bg-white p-5 shadow ${s.ring}`}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="font-semibold text-gray-900">{a.name}</h2>
+                    <p className="text-xs text-gray-500">{a.type} · {a.model}</p>
+                  </div>
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${s.badge}`}>
+                    <span className={`h-2 w-2 rounded-full ${s.dot}`} />
+                    {a.health.status}
+                  </span>
+                </div>
+
+                <div className="mt-4 text-3xl font-bold text-gray-900">
+                  {a.health.value ?? "—"}
+                  <span className="ml-1 text-sm font-normal text-gray-400">{a.health.metric}</span>
+                </div>
+
+                <p className="mt-3 text-sm text-gray-600">{a.health.reason}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>
+  );
+}
+
+function Summary({ label, n, color }: { label: string; n: number; color: string }) {
+  return (
+    <div className="rounded-lg bg-white px-3 py-2 shadow-sm">
+      <span className={`text-lg font-bold ${color}`}>{n}</span>{" "}
+      <span className="text-gray-500">{label}</span>
+    </div>
   );
 }
