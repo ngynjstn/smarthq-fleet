@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthButton from "@/components/AuthButton";
 import { auth } from "@/auth";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +34,9 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-3">
           <nav className="flex items-center gap-4 text-sm">
-            <span className="font-semibold text-gray-900">SmartHQ Fleet</span>
-            <a href="/" className="text-gray-600 hover:text-gray-900">Ops</a>
-            <a href="/assistant" className="text-gray-600 hover:text-gray-900">Assistant</a>
-            {isExec && <a href="/business" className="text-gray-600 hover:text-gray-900">Business</a>}
+            <Link href="/" className="text-gray-600 hover:text-gray-900">Ops</Link>
+            <Link href="/assistant" className="text-gray-600 hover:text-gray-900">Assistant</Link>
+            {isExec && <Link href="/business" className="text-gray-600 hover:text-gray-900">Business</Link>}
           </nav>
           <AuthButton />
         </header>

@@ -7,7 +7,6 @@ type Band = [number, number];
 type Profile = { metric: string; healthy: Band; warning: Band; critical: Band };
 
 const PROFILES: Record<string, Profile> = {
-  //REFRIGERATOR: { metric: "TEMP_C",         healthy: [2, 5],     warning: [5.5, 7],   critical: [7.5, 10]  },
   DRYER:        { metric: "TEMP_C",         healthy: [45, 70],   warning: [76, 89],   critical: [91, 105]  },
   WASHER:       { metric: "VIBRATION_MM_S", healthy: [2, 7],     warning: [8.5, 11],  critical: [12.5, 16] },
   OVEN:         { metric: "TEMP_C",         healthy: [180, 250], warning: [265, 295], critical: [305, 330] },

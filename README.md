@@ -8,7 +8,7 @@ I built this as a portfolio project to show I can take an idea end to end: data 
 
 You can sign in with any Google account. You will land in the Ops view as a standard user. The Business view with the financial numbers is restricted to exec accounts, so that tab will not show up for a normal login.
 
-![alt text](<Screenshot 2026-06-22 150731.png>)
+![SmartHQ Fleet dashboard showing live appliance health](<docs/dashboard.png>)
 
 ## What it does
 

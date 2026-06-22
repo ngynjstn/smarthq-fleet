@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Status = "HEALTHY" | "WARNING" | "CRITICAL" | "OFFLINE";
 
@@ -67,7 +68,7 @@ export default function BusinessView() {
             <h1 className="text-2xl font-bold text-gray-900">Fleet Business Impact</h1>
             <p className="text-gray-500">What the connected fleet is worth, in dollars</p>
           </div>
-          <a href="/" className="text-sm text-blue-600 hover:underline">← Ops view</a>
+          <Link href="/" className="text-sm text-blue-600 hover:underline">← Ops view</Link>
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
