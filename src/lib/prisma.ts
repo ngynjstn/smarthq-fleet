@@ -1,14 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-
-// this driver adapter is used for sqlite
-// it wraps the better sqllite3 driver and points at our databaseurl
-
-const adapter = new PrismaBetterSqlite3({
-    url: process.env["DATABASE_URL"],
-});
+// Postgres (Neon) driver adapter, pointed at the POOLED connection
+// for short-lived serverless queries.
+const adapter = new PrismaPg({ connectionString: process.env["DATABASE_URL"] });
 
 //cache the client on global this so hot reload in dev doesnt open new connection pool everytome the file gets saved
 const globalForPrisma = globalThis as unknown as {
