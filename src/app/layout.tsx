@@ -27,6 +27,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -34,6 +35,7 @@ export default async function RootLayout({
           <nav className="flex items-center gap-4 text-sm">
             <span className="font-semibold text-gray-900">SmartHQ Fleet</span>
             <a href="/" className="text-gray-600 hover:text-gray-900">Ops</a>
+            <a href="/assistant" className="text-gray-600 hover:text-gray-900">Assistant</a>
             {isExec && <a href="/business" className="text-gray-600 hover:text-gray-900">Business</a>}
           </nav>
           <AuthButton />
