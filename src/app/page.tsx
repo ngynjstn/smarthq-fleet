@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TelemetrySimulator from "@/components/TelemetrySimulator";
 
 type Status = "HEALTHY" | "WARNING" | "CRITICAL" | "OFFLINE";
 
@@ -62,6 +63,7 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-5xl">
+        <TelemetrySimulator />
         <h1 className="text-2xl font-bold text-gray-900">SmartHQ Fleet</h1>
         <p className="text-gray-500">Connected appliance monitor</p>
 
