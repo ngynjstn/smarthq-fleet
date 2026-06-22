@@ -28,6 +28,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Skip Next internals, the auth endpoints, and static files.
-  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api/auth|api/telemetry|_next/static|_next/image|favicon.ico).*)"],
 };
