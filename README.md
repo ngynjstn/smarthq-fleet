@@ -1,5 +1,7 @@
 # SmartHQ Fleet
 
+[![CI](https://github.com/ngynjstn/smarthq-fleet/actions/workflows/ci.yml/badge.svg)](https://github.com/ngynjstn/smarthq-fleet/actions/workflows/ci.yml)
+
 A monitoring dashboard for a fleet of connected GE appliances. It pulls live telemetry from each unit, works out the health of every appliance on the fly, and flags problems before they turn into failures. There is a role-aware business view that turns those health states into dollars, and an AI assistant that answers questions about the fleet in plain English.
 
 I built this as a portfolio project to show I can take an idea end to end: data model, real-time UI, auth, role-based access, an LLM feature, and a real deployment.
