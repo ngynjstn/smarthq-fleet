@@ -9,26 +9,24 @@ export default async function AuthButton() {
   if (!session?.user) {
     return (
       <form action={async () => { "use server"; await signIn("google"); }}>
-        <button type="submit" className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700">
-          Sign in with Google
-        </button>
+        <button type="submit" className="shq-btn-primary">Sign in with Google</button>
       </form>
     );
   }
 
-  // Logged in -> show who you are + your role, plus a sign-out button.
+  // Logged in -> who you are + role badge, plus a sign-out button.
   return (
-    <div className="flex items-center gap-3 text-sm">
-      <span className="text-gray-600">
-        {session.user.email}
-        <span className="ml-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "var(--text-2)" }}>
+        <span style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {session.user.email}
+        </span>
+        <span className="shq-badge" style={{ color: "var(--text-2)", background: "var(--surface-2)", border: "1px solid var(--border)" }}>
           {session.user.role}
         </span>
       </span>
       <form action={async () => { "use server"; await signOut(); }}>
-        <button type="submit" className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-          Sign out
-        </button>
+        <button type="submit" className="shq-btn-ghost">Sign out</button>
       </form>
     </div>
   );

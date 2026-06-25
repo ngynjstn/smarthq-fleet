@@ -1,26 +1,348 @@
 @import "tailwindcss";
 
+/* ============================================================
+   SmartHQ Fleet — design system
+   Tokens translated from the Claude-design redesign (OKLCH).
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: oklch(0.985 0.003 255);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.975 0.004 255);
+  --surface-3: oklch(0.962 0.005 255);
+  --border: oklch(0.922 0.005 255);
+  --border-strong: oklch(0.875 0.007 255);
+  --text: oklch(0.245 0.012 262);
+  --text-2: oklch(0.505 0.011 262);
+  --text-3: oklch(0.635 0.009 262);
+  --accent: oklch(0.555 0.16 274);
+  --accent-soft: oklch(0.952 0.032 274);
+  --shadow-sm: 0 1px 2px rgba(17, 18, 28, 0.05), 0 1px 1px rgba(17, 18, 28, 0.03);
+  --shadow-md: 0 10px 28px -10px rgba(17, 18, 28, 0.16), 0 2px 6px -2px rgba(17, 18, 28, 0.06);
+
+  --st-healthy-fg: oklch(0.49 0.1 158);
+  --st-healthy-bg: oklch(0.958 0.034 162);
+  --st-healthy-dot: oklch(0.62 0.14 158);
+  --st-warning-fg: oklch(0.505 0.095 68);
+  --st-warning-bg: oklch(0.963 0.05 82);
+  --st-warning-dot: oklch(0.74 0.135 76);
+  --st-critical-fg: oklch(0.525 0.165 22);
+  --st-critical-bg: oklch(0.957 0.035 22);
+  --st-critical-dot: oklch(0.595 0.2 23);
+  --st-offline-fg: oklch(0.5 0.012 262);
+  --st-offline-bg: oklch(0.958 0.005 262);
+  --st-offline-dot: oklch(0.66 0.012 262);
+
+  --font-sans: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --bg: oklch(0.198 0.012 266);
+  --surface: oklch(0.242 0.013 266);
+  --surface-2: oklch(0.275 0.014 266);
+  --surface-3: oklch(0.3 0.015 266);
+  --border: oklch(0.322 0.014 266);
+  --border-strong: oklch(0.4 0.016 266);
+  --text: oklch(0.955 0.005 266);
+  --text-2: oklch(0.73 0.012 266);
+  --text-3: oklch(0.605 0.012 266);
+  --accent: oklch(0.7 0.14 274);
+  --accent-soft: oklch(0.33 0.06 274);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 14px 32px -12px rgba(0, 0, 0, 0.6), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --st-healthy-fg: oklch(0.82 0.13 162);
+  --st-healthy-bg: oklch(0.322 0.05 162);
+  --st-healthy-dot: oklch(0.72 0.15 158);
+  --st-warning-fg: oklch(0.84 0.115 84);
+  --st-warning-bg: oklch(0.33 0.05 82);
+  --st-warning-dot: oklch(0.8 0.14 78);
+  --st-critical-fg: oklch(0.77 0.14 26);
+  --st-critical-bg: oklch(0.335 0.06 24);
+  --st-critical-dot: oklch(0.68 0.19 24);
+  --st-offline-fg: oklch(0.7 0.012 266);
+  --st-offline-bg: oklch(0.3 0.008 266);
+  --st-offline-dot: oklch(0.6 0.012 266);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+/* ---------- keyframes ---------- */
+@keyframes shq-ping { 0% { transform: scale(1); opacity: 0.5; } 75%, 100% { transform: scale(2.4); opacity: 0; } }
+@keyframes shq-shimmer { 0% { background-position: -340px 0; } 100% { background-position: 340px 0; } }
+@keyframes shq-fade { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shq-fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shq-spin { to { transform: rotate(360deg); } }
+
+/* equipment-visual animations */
+@keyframes shq-drum-slow { to { transform: rotate(360deg); } }
+@keyframes shq-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-1.5px, 1px) rotate(-0.6deg); }
+  40% { transform: translate(1.5px, -1px) rotate(0.6deg); }
+  60% { transform: translate(-1.2px, -0.8px) rotate(-0.4deg); }
+  80% { transform: translate(1.2px, 0.8px) rotate(0.4deg); }
+}
+@keyframes shq-rise {
+  0% { transform: translateY(4px); opacity: 0; }
+  35% { opacity: 0.9; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+@keyframes shq-glow-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+@keyframes shq-breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* ============================================================
+   Layout primitives
+   ============================================================ */
+.shq-page { max-width: 1200px; margin: 0 auto; padding: 34px 24px 72px; animation: shq-fade 0.32s ease both; }
+.shq-page--narrow { max-width: 1100px; }
+.shq-page--assistant { max-width: 720px; padding-top: 48px; }
+
+.shq-h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.025em; color: var(--text); }
+.shq-sub { margin: 6px 0 0; font-size: 14px; color: var(--text-2); }
+
+/* ============================================================
+   Header
+   ============================================================ */
+.shq-header {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 24px;
+  height: 60px; padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+}
+.shq-brand { display: flex; align-items: center; gap: 11px; padding-right: 4px; }
+.shq-logomark {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--accent);
+  display: flex; align-items: flex-end; justify-content: center; gap: 2.5px; padding-bottom: 8px;
+  box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.shq-logomark span { width: 3px; border-radius: 2px; background: #fff; }
+.shq-wordmark { display: flex; align-items: baseline; gap: 5px; letter-spacing: -0.01em; font-size: 15px; }
+.shq-nav { display: flex; align-items: center; gap: 2px; }
+.shq-navlink {
+  appearance: none; border: none; cursor: pointer; font-family: inherit; text-decoration: none;
+  font-size: 13.5px; font-weight: 500; padding: 7px 12px; border-radius: 8px;
+  color: var(--text-2); background: transparent; transition: color 0.16s, background 0.16s;
+}
+.shq-navlink:hover { color: var(--text); background: var(--surface-2); }
+.shq-navlink[data-active="true"] { color: var(--text); background: var(--surface-2); }
+.shq-header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.shq-icon-btn {
+  appearance: none; cursor: pointer; width: 34px; height: 34px; border-radius: 9px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  transition: border-color 0.16s, color 0.16s, background 0.16s;
+}
+.shq-icon-btn:hover { border-color: var(--border-strong); color: var(--text); background: var(--surface-2); }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.shq-btn-primary {
+  appearance: none; cursor: pointer; font-family: inherit; font-size: 13.5px; font-weight: 600;
+  color: #fff; background: var(--accent); border: none; padding: 8px 16px; border-radius: 9px;
+  box-shadow: 0 2px 8px -3px color-mix(in srgb, var(--accent) 60%, transparent);
+  transition: filter 0.16s, transform 0.12s;
+}
+.shq-btn-primary:hover { filter: brightness(1.06); }
+.shq-btn-primary:active { transform: translateY(1px); }
+.shq-btn-primary:disabled { opacity: 0.55; cursor: default; }
+.shq-btn-ghost {
+  appearance: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border-strong);
+  padding: 8px 16px; border-radius: 9px; transition: background 0.16s;
+}
+.shq-btn-ghost:hover { background: var(--surface-2); }
+
+/* ============================================================
+   Live pill / badges
+   ============================================================ */
+.shq-livepill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+  box-shadow: var(--shadow-sm); font-size: 12px; font-weight: 500; color: var(--text-2);
+}
+.shq-livedot { position: relative; width: 8px; height: 8px; display: inline-flex; }
+.shq-livedot::before {
+  content: ""; position: absolute; inset: 0; border-radius: 999px;
+  background: var(--st-healthy-dot); animation: shq-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.shq-livedot::after {
+  content: ""; position: relative; width: 8px; height: 8px; border-radius: 999px; background: var(--st-healthy-dot);
+}
+.shq-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.03em;
+}
+.shq-badge-dot { width: 6px; height: 6px; border-radius: 999px; }
+
+/* ============================================================
+   Status segments (Ops summary filter)
+   ============================================================ */
+.shq-segs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 26px; }
+.shq-seg {
+  appearance: none; cursor: pointer; text-align: left; font-family: inherit;
+  display: flex; align-items: center; gap: 14px; padding: 15px 17px; border-radius: 13px;
+  border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-sm);
+  transition: border-color 0.16s, box-shadow 0.16s, transform 0.12s;
+}
+.shq-seg:hover { border-color: var(--border-strong); }
+.shq-seg:active { transform: translateY(1px); }
+.shq-seg[data-active="true"] { box-shadow: none; }
+.shq-seg-dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; }
+.shq-seg-count { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.shq-seg-label { font-size: 11.5px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+
+/* ============================================================
+   Appliance cards (Ops)
+   ============================================================ */
+.shq-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.shq-card {
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+  border-radius: 14px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-sm);
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.18s, border-color 0.18s;
+}
+.shq-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+.shq-card-accent { position: absolute; left: 0; top: 16px; bottom: 16px; width: 3px; border-radius: 0 3px 3px 0; z-index: 2; }
+.shq-card-body { display: flex; flex-direction: column; gap: 13px; padding: 16px 18px 17px; }
+.shq-card-name { margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shq-card-meta { margin: 4px 0 0; font-size: 11.5px; font-family: var(--font-mono); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shq-card-metric { display: flex; align-items: baseline; gap: 6px; }
+.shq-card-value { font-size: 33px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.shq-card-unit { font-size: 14px; font-weight: 500; color: var(--text-3); }
+.shq-card-reason { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--text-2); display: flex; gap: 7px; }
+.shq-card-reason-dot { margin-top: 5px; width: 5px; height: 5px; border-radius: 999px; flex-shrink: 0; }
+
+.shq-skel { height: 232px; border-radius: 14px; border: 1px solid var(--border); background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%); background-size: 680px 100%; animation: shq-shimmer 1.4s linear infinite; }
+
+.shq-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  padding: 64px 24px; border: 1px dashed var(--border-strong); border-radius: 16px; background: var(--surface);
+  animation: shq-fadein 0.3s both;
+}
+
+/* ============================================================
+   Equipment visual (animated SVG schematic)
+   ============================================================ */
+.shq-eq {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: 132px; border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--eq-tint) 12%, transparent), transparent 70%),
+    var(--surface-2);
+  overflow: hidden;
+}
+.shq-eq svg { width: 150px; height: 100px; display: block; }
+.shq-eq-stroke { stroke: var(--text-3); }
+.shq-eq-fill-soft { fill: var(--surface); }
+.shq-eq-accent { stroke: var(--eq-tint); }
+.shq-eq-accent-fill { fill: var(--eq-tint); }
+
+/* status tints feed --eq-tint */
+.shq-eq--healthy  { --eq-tint: var(--st-healthy-dot); }
+.shq-eq--warning  { --eq-tint: var(--st-warning-dot); }
+.shq-eq--critical { --eq-tint: var(--st-critical-dot); }
+.shq-eq--offline  { --eq-tint: var(--st-offline-dot); }
+.shq-eq--offline svg { opacity: 0.45; }
+
+/* washer/dryer drum rotation, speed scales with severity */
+.shq-drum { transform-origin: center; transform-box: fill-box; }
+.shq-eq--healthy  .shq-drum { animation: shq-drum-slow 7s linear infinite; }
+.shq-eq--warning  .shq-drum { animation: shq-drum-slow 3.2s linear infinite; }
+.shq-eq--critical .shq-drum { animation: shq-drum-slow 1.1s linear infinite; }
+.shq-eq--offline  .shq-drum { animation: none; }
+
+/* whole-unit shake (washer vibration / critical) */
+.shq-eq--warning  .shq-vib { animation: shq-shake 0.5s ease-in-out infinite; }
+.shq-eq--critical .shq-vib { animation: shq-shake 0.22s ease-in-out infinite; }
+
+/* heat / cold waves rising (fridge, dryer, oven) */
+.shq-wave { opacity: 0; transform-box: fill-box; }
+.shq-eq--healthy  .shq-wave { animation: shq-rise 3.4s ease-in infinite; }
+.shq-eq--warning  .shq-wave { animation: shq-rise 2.1s ease-in infinite; }
+.shq-eq--critical .shq-wave { animation: shq-rise 1.2s ease-in infinite; }
+.shq-wave:nth-of-type(2) { animation-delay: 0.7s; }
+.shq-wave:nth-of-type(3) { animation-delay: 1.4s; }
+.shq-eq--offline .shq-wave { animation: none; }
+
+/* glowing element (oven coils / indicator light) */
+.shq-glow { animation: shq-glow-pulse 2.4s ease-in-out infinite; }
+.shq-eq--critical .shq-glow { animation: shq-glow-pulse 0.9s ease-in-out infinite; }
+.shq-eq--offline .shq-glow { animation: none; opacity: 0.2; }
+
+/* status indicator LED on the unit */
+.shq-led { fill: var(--eq-tint); }
+.shq-eq--healthy .shq-led, .shq-eq--warning .shq-led, .shq-eq--critical .shq-led { animation: shq-breathe 1.8s ease-in-out infinite; }
+.shq-eq--critical .shq-led { animation: shq-breathe 0.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .shq-drum, .shq-vib, .shq-wave, .shq-glow, .shq-led, .shq-livedot::before { animation: none !important; }
+}
+
+/* ============================================================
+   KPI cards + ledger (Business)
+   ============================================================ */
+.shq-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 30px; }
+.shq-kpi { padding: 18px 19px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-sm); transition: box-shadow 0.18s, border-color 0.18s; }
+.shq-kpi:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+.shq-kpi-label { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); font-family: var(--font-mono); }
+.shq-kpi-value { margin: 13px 0 0; font-size: 31px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.shq-kpi-note { margin: 11px 0 0; font-size: 12px; color: var(--text-3); }
+
+.shq-panel { border: 1px solid var(--border); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow-sm); overflow: hidden; }
+.shq-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.shq-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.shq-table th { padding: 11px 20px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-3); background: var(--surface-2); border-bottom: 1px solid var(--border); text-align: left; }
+.shq-table td { padding: 13px 20px; border-bottom: 1px solid var(--border); }
+.shq-table tbody tr { transition: background 0.14s; }
+.shq-table tbody tr:hover { background: var(--surface-2); }
+.shq-num { font-variant-numeric: tabular-nums; font-weight: 500; }
+
+/* ============================================================
+   Assistant
+   ============================================================ */
+.shq-assistant-badge {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); margin-bottom: 16px;
+  font-size: 11.5px; font-weight: 500; color: var(--text-2); font-family: var(--font-mono);
+}
+.shq-ask {
+  display: flex; gap: 9px; padding: 7px; border-radius: 14px; border: 1px solid var(--border);
+  background: var(--surface); box-shadow: var(--shadow-sm); transition: border-color 0.16s, box-shadow 0.16s;
+}
+.shq-ask:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.shq-ask input { flex: 1; min-width: 0; appearance: none; border: none; outline: none; background: transparent; font-family: inherit; font-size: 14.5px; color: var(--text); padding: 9px 11px; }
+.shq-ask input::placeholder { color: var(--text-3); }
+.shq-chip {
+  appearance: none; cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 500;
+  color: var(--text-2); background: var(--surface); border: 1px solid var(--border); padding: 7px 13px; border-radius: 999px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.shq-chip:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+.shq-chip:disabled { opacity: 0.5; cursor: default; }
+.shq-answer { margin-top: 24px; padding: 22px 24px; border-radius: 15px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-md); animation: shq-fade 0.3s both; }
+.shq-answer-head { display: flex; align-items: center; gap: 9px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-3); }
+.shq-answer-body { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+.shq-answer-idle { margin-top: 24px; padding: 40px 24px; text-align: center; border-radius: 15px; border: 1px dashed var(--border); background: color-mix(in srgb, var(--surface) 50%, transparent); }
+.shq-spin { width: 14px; height: 14px; border-radius: 999px; border: 2px solid var(--border-strong); border-top-color: var(--accent); animation: shq-spin 0.7s linear infinite; }
+.shq-line { height: 11px; border-radius: 6px; margin-bottom: 10px; background: linear-gradient(100deg, var(--surface-2) 30%, var(--surface-3) 50%, var(--surface-2) 70%); background-size: 520px 100%; animation: shq-shimmer 1.3s linear infinite; }
