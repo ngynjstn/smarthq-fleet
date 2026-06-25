@@ -20,12 +20,25 @@ You can sign in with any Google account. You will land in the Ops view as a stan
 - **Business view (exec only).** The same health states rolled up into money: estimated savings from catching issues early, cost at risk from units running to failure, how many issues were caught early, and fleet uptime. This view and its API are locked to exec accounts.
 - **AI assistant.** Ask questions like "what should I be worried about right now?" and get an answer grounded in the actual current fleet snapshot. It is told to answer only from the data it is given and never make up numbers. Exec users get the dollar figures in the assistant's context; standard users do not.
 - **Telemetry ingestion.** A simple endpoint that takes a reading, validates it, and stores it, which is what a real device would post to.
+- **Live equipment visualizations.** Each appliance card carries an animated SVG schematic whose motion is tied to that unit's real health state — a washer that shakes harder as vibration climbs, a fridge whose heat waves rise faster as the temperature trends up, an oven element that glows red on a runaway. It's the live status, drawn, not a static stock image.
 
 ## The predictive maintenance angle
 
 This is the idea I care about most. Reactive monitoring tells you the fridge is too warm after the food has already spoiled. Predictive monitoring tells you the compressor is degrading while the fridge is still cold enough, so you can schedule a planned repair instead of eating an emergency one.
 
 The fridge rule looks at the recent temperature readings and measures the trend across them. A sustained rise gets flagged as a warning ("temp rising, possible compressor wear") even though the absolute temperature is still fine. The cost model puts a number on that: an unplanned refrigerator failure runs about $900 including food spoilage, a planned repair about $250, so every early catch is roughly $650 saved.
+
+## Frontend & design
+
+The UI is built on a small, token-based design system rather than ad-hoc utility classes, so the whole app stays visually consistent and easy to retheme.
+
+- **Design tokens (OKLCH).** Surfaces, text, borders, shadows, and the four status colors (healthy / warning / critical / offline) are defined once as CSS custom properties in `globals.css` and referenced everywhere. Using OKLCH keeps the palette perceptually even and easy to tune.
+- **Light and dark themes.** A header toggle flips `data-theme` on the document and persists the choice to `localStorage`; an inline script applies the saved theme before first paint so there's no flash. Every component reads the same token names, so dark mode is just a second set of values.
+- **Animated equipment schematics.** `ApplianceVisual` renders a hand-built SVG line-drawing per appliance type (refrigerator, washer, dryer, oven). All motion is CSS keyframes driven by the live health status, and each animation maps to that appliance's actual failure mode: the washer's drum spins and the unit shakes with vibration severity, the fridge and dryer emit heat waves that rise faster as things heat up, the oven element glows and intensifies toward red on a runaway. Offline units go grey and still. The whole thing respects `prefers-reduced-motion`.
+- **Considered states, not just the happy path.** The Ops dashboard has loading skeletons, an empty state, and clickable status segments that filter the fleet; the Assistant has a hero, suggestion chips, a loading shimmer, and a grounded-answer card. The header has a logomark, active-route nav, and the theme toggle.
+- **Honest data.** The visual redesign came from a Claude-generated mockup that shipped with invented KPI trend deltas and a dozen fictional appliances. I kept the look and dropped the fiction — the UI renders only the real four appliances, their real metrics, and the real business numbers from the cost model.
+
+It's a pure presentation layer: the redesign changed no data, health logic, or auth.
 
 ## Architecture
 
@@ -69,7 +82,7 @@ Every request except the telemetry endpoint and the auth routes goes through the
 - **Next.js (App Router) and TypeScript** for the app, both UI and API.
 - **Prisma** as the ORM, pointed at **Neon Postgres** (serverless).
 - **Auth.js (NextAuth) with Google OAuth.** Sessions are JWTs and carry the user's role. The auth config is split so the adapter-free part can run in the edge proxy and the full part with the database adapter runs on the server.
-- **Tailwind CSS** for the UI.
+- **Tailwind CSS** plus a custom OKLCH design-token system (CSS custom properties) for theming, light/dark mode, and the component styles. Equipment visuals are animated **inline SVG** driven by CSS keyframes — no canvas or 3D dependency.
 - **Google Gemini** (`@google/genai`) for the assistant.
 - **Vercel** for hosting.
 
@@ -78,6 +91,7 @@ Every request except the telemetry endpoint and the auth routes goes through the
 ```
 src/
   app/
+    globals.css               design tokens, theming, and component styles
     page.tsx                  Ops dashboard
     business/page.tsx         exec-only business view
     assistant/page.tsx        assistant UI
@@ -96,6 +110,9 @@ src/
     prisma.ts                 Prisma client
   components/
     TelemetrySimulator.tsx    posts simulated readings while a tab is open
+    ApplianceVisual.tsx       animated SVG schematic per appliance, driven by health
+    NavLinks.tsx              header nav with active-route highlighting
+    ThemeToggle.tsx           light/dark theme switch (persisted)
     AuthButton.tsx
   auth.ts                     full auth (with DB adapter)
   auth.config.ts             edge-safe auth (providers + callbacks)
