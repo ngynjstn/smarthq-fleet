@@ -17,11 +17,11 @@ export default async function AuthButton() {
   // Logged in -> who you are + role badge, plus a sign-out button.
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "var(--text-2)" }}>
+      <span style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--text-2)" }}>
         <span style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {session.user.email}
         </span>
-        <span className="shq-badge" style={{ color: "var(--text-2)", background: "var(--surface-2)", border: "1px solid var(--border)" }}>
+        <span className="shq-badge" style={{ color: "var(--text-2)", background: "var(--surface-2)" }}>
           {session.user.role}
         </span>
       </span>
