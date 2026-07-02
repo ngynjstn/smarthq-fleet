@@ -29,7 +29,6 @@ const usd = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 const tint = (s: Status) => `var(--st-${s.toLowerCase()}-dot)`;
-const prettyType = (t: string) => t.charAt(0) + t.slice(1).toLowerCase();
 
 export default function BusinessView() {
   const [data, setData] = useState<BusinessSummary | null>(null);
@@ -51,50 +50,54 @@ export default function BusinessView() {
     return () => clearInterval(interval);
   }, []);
 
-  if (error) return <main className="shq-page shq-page--narrow"><p style={{ color: "var(--st-critical-fg)" }}>Error: {error}</p></main>;
+  if (error)
+    return (
+      <main className="shq-page shq-page--narrow">
+        <p style={{ color: "var(--st-critical-fg)" }}>Error: {error}</p>
+      </main>
+    );
 
   const rows = data ? [...data.units].sort((a, b) => b.atRisk - a.atRisk) : [];
 
-  const kpis = data
+  const stats = data
     ? [
-        { label: "Estimated savings", value: usd(data.estimatedSavings), note: `${data.issuesCaughtEarly} issue(s) caught early` },
-        { label: "Cost at risk", value: usd(data.costAtRisk), note: `${data.criticalNow} critical now` },
-        { label: "Fleet uptime", value: `${data.uptimePct}%`, note: `${data.offline} offline` },
-        { label: "Units monitored", value: String(data.totalUnits), note: "connected appliances" },
+        { label: "Estimated savings", value: usd(data.estimatedSavings), note: `${data.issuesCaughtEarly} issue(s) caught early`, color: data.estimatedSavings ? "var(--st-healthy-fg)" : "var(--text)" },
+        { label: "Cost at risk", value: usd(data.costAtRisk), note: `${data.criticalNow} critical now`, color: data.costAtRisk ? "var(--st-critical-fg)" : "var(--text)" },
+        { label: "Fleet uptime", value: `${data.uptimePct}%`, note: `${data.offline} offline`, color: "var(--text)" },
+        { label: "Units monitored", value: String(data.totalUnits), note: "connected appliances", color: "var(--text)" },
       ]
-    : [];
+    : null;
 
   return (
     <main>
       <div className="shq-page shq-page--narrow">
-        <div style={{ marginBottom: 24 }}>
-          <h1 className="shq-h1">Business impact</h1>
-          <p className="shq-sub">What the connected fleet is worth right now, in dollars.</p>
+        <div style={{ marginBottom: 26 }}>
+          <p className="shq-kicker" style={{ margin: 0 }}>Business / Impact</p>
+          <h1 className="shq-h1">What the fleet is worth</h1>
+          <p className="shq-sub">Savings captured and cost exposure, computed live from the same health verdicts the Ops view runs on.</p>
         </div>
 
-        {/* KPIs */}
-        <div className="shq-kpis">
-          {(data ? kpis : [0, 1, 2, 3]).map((k, i) =>
-            data ? (
-              <div key={i} className="shq-kpi">
-                <p className="shq-kpi-label">{(k as { label: string }).label}</p>
-                <p className="shq-kpi-value">{(k as { value: string }).value}</p>
-                <p className="shq-kpi-note">{(k as { note: string }).note}</p>
+        {/* stat strip */}
+        {stats ? (
+          <div className="shq-stats">
+            {stats.map((k) => (
+              <div key={k.label} className="shq-stat">
+                <p className="shq-micro" style={{ margin: 0 }}>{k.label}</p>
+                <p className="shq-stat-value" style={{ color: k.color }}>{k.value}</p>
+                <p className="shq-stat-note">{k.note}</p>
               </div>
-            ) : (
-              <div key={i} className="shq-skel" style={{ height: 116 }} />
-            )
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="shq-skel" style={{ height: 110, marginBottom: 28 }} />
+        )}
 
         {/* ledger */}
         <div className="shq-panel">
           <div className="shq-panel-head">
-            <h2 style={{ margin: 0, fontSize: 14.5, fontWeight: 600, color: "var(--text)" }}>Appliance ledger</h2>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>Appliance ledger</h2>
             {data && (
-              <span style={{ fontSize: 12, color: "var(--text-3)", fontFamily: "var(--font-mono)" }}>
-                {data.totalUnits} units · ranked by exposure
-              </span>
+              <span className="shq-micro">{data.totalUnits} units · ranked by exposure</span>
             )}
           </div>
           <div style={{ overflowX: "auto" }}>
@@ -111,9 +114,9 @@ export default function BusinessView() {
                 {rows.map((u) => (
                   <tr key={u.id}>
                     <td>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                         <span style={{ fontWeight: 600, color: "var(--text)" }}>{u.name}</span>
-                        <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>{prettyType(u.type)}</span>
+                        <span className="shq-micro">{u.type}</span>
                       </div>
                     </td>
                     <td>

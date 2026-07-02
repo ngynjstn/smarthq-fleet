@@ -43,13 +43,9 @@ export default async function RootLayout({
       <body>
         <header className="shq-header">
           <div className="shq-brand">
-            <div className="shq-logomark">
-              <span style={{ height: 7, opacity: 0.62 }} />
-              <span style={{ height: 12, opacity: 0.82 }} />
-              <span style={{ height: 9 }} />
-            </div>
+            <span className="shq-mark" />
             <div className="shq-wordmark">
-              <span style={{ fontWeight: 600, color: "var(--text)" }}>SmartHQ</span>
+              <span style={{ fontWeight: 700, color: "var(--text)" }}>SmartHQ</span>
               <span style={{ fontWeight: 400, color: "var(--text-3)" }}>Fleet</span>
             </div>
           </div>

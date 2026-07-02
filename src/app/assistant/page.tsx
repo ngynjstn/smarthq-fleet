@@ -44,17 +44,10 @@ export default function AssistantPage() {
   return (
     <main>
       <div className="shq-page shq-page--assistant">
-        <div style={{ textAlign: "center", marginBottom: 26 }}>
-          <div className="shq-assistant-badge">
-            <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--accent)" }} />
-            FLEET ASSISTANT
-          </div>
-          <h1 className="shq-h1" style={{ fontSize: 25, letterSpacing: "-0.03em" }}>
-            Ask anything about your fleet
-          </h1>
-          <p className="shq-sub" style={{ marginTop: 9 }}>
-            Plain-English answers grounded in live telemetry across your appliances.
-          </p>
+        <div style={{ marginBottom: 24 }}>
+          <p className="shq-kicker" style={{ margin: 0 }}>Assistant / Fleet Q&amp;A</p>
+          <h1 className="shq-h1">Ask the fleet</h1>
+          <p className="shq-sub">Plain-English answers grounded in the live telemetry snapshot — it only speaks from the data.</p>
         </div>
 
         <form
@@ -64,17 +57,18 @@ export default function AssistantPage() {
             ask();
           }}
         >
+          <span className="prompt">&gt;</span>
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g. Which units need attention right now?"
+            placeholder="which units need attention right now?"
           />
           <button type="submit" disabled={loading} className="shq-btn-primary" style={{ flexShrink: 0 }}>
-            {loading ? "Thinking…" : "Ask"}
+            {loading ? "…" : "Ask"}
           </button>
         </form>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
           {CHIPS.map((c) => (
             <button key={c} className="shq-chip" disabled={loading} onClick={() => ask(c)}>
               {c}
@@ -84,32 +78,32 @@ export default function AssistantPage() {
 
         {error && (
           <div className="shq-answer" style={{ borderColor: "var(--st-critical-dot)" }}>
-            <p style={{ margin: 0, fontSize: 14, color: "var(--st-critical-fg)" }}>Error: {error}</p>
+            <p className="shq-answer-body" style={{ color: "var(--st-critical-fg)" }}>Error: {error}</p>
           </div>
         )}
 
         {loading && (
-          <div className="shq-answer" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <span className="shq-spin" />
-              <span style={{ fontSize: 12.5, color: "var(--text-3)" }}>Reading live telemetry…</span>
+          <div className="shq-answer">
+            <div className="shq-answer-head">
+              <span style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span className="shq-spin" />
+                <span className="shq-micro">Reading live telemetry…</span>
+              </span>
             </div>
-            <div className="shq-line" style={{ width: "90%" }} />
-            <div className="shq-line" style={{ width: "75%" }} />
-            <div className="shq-line" style={{ width: "60%", marginBottom: 0 }} />
+            <div style={{ padding: 18 }}>
+              <div className="shq-line" style={{ width: "88%" }} />
+              <div className="shq-line" style={{ width: "72%" }} />
+              <div className="shq-line" style={{ width: "55%", marginBottom: 0 }} />
+            </div>
           </div>
         )}
 
         {!loading && answer && (
           <div className="shq-answer">
             <div className="shq-answer-head">
-              <span style={{ width: 22, height: 22, borderRadius: 7, background: "var(--accent)", display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 1.5, paddingBottom: 5, flexShrink: 0 }}>
-                <span style={{ width: 2, height: 5, borderRadius: 2, background: "#fff", opacity: 0.6 }} />
-                <span style={{ width: 2, height: 8, borderRadius: 2, background: "#fff" }} />
-                <span style={{ width: 2, height: 6, borderRadius: 2, background: "#fff", opacity: 0.8 }} />
-              </span>
-              <span>
-                You asked · <span style={{ color: "var(--text-2)", fontWeight: 500 }}>{askedQ}</span>
+              <span className="shq-micro">Answer</span>
+              <span className="shq-mono" style={{ fontSize: 11.5, color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                &gt; {askedQ}
               </span>
             </div>
             <p className="shq-answer-body">{answer}</p>
@@ -118,8 +112,8 @@ export default function AssistantPage() {
 
         {!loading && !answer && !error && (
           <div className="shq-answer-idle">
-            <p style={{ margin: 0, fontSize: 13.5, color: "var(--text-3)" }}>
-              Answers appear here. Ask a question above or pick a suggestion to get started.
+            <p className="shq-mono" style={{ margin: 0, fontSize: 12, color: "var(--text-3)" }}>
+              Answers appear here. Ask above or pick a suggestion.
             </p>
           </div>
         )}
